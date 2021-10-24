@@ -17,10 +17,10 @@ There are the features and services involved for the stack :
 - of course Terraform and Wordpress :)
 
 ## PREREQUISITES
-An exisiting Route53 public hosted zone should be present
-Your variables.tf should have those 3 variables
+- An exisiting Route53 public hosted zone should be present
+- You should define those 3 variables
 
-```
+```hcl
 variable "domain_name" {
   default = "mydomain.tld"
 }

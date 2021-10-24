@@ -51,6 +51,19 @@ resource "aws_security_group_rule" "ecs_service_ingress_https" {
   security_group_id        = aws_security_group.ecs_service[0].id
 }
 
+resource "aws_security_group_rule" "ecs_service_ingress_https_self" {
+  # count                    = length(var.ecs_service_security_grop_ids) == 0 ? 1 : 0
+  count       = length(var.security_group_ids.ecs) == 0 ? 1 : 0
+  type        = "ingress"
+  description = "https from self"
+  from_port   = 443
+  to_port     = 443
+  protocol    = "tcp"
+  #  source_security_group_id = aws_security_group.lb_service[0].id
+  self              = true
+  security_group_id = aws_security_group.ecs_service[0].id
+}
+
 resource "aws_security_group_rule" "ecs_service_egress_http" {
   # count             = length(var.ecs_service_security_group_ids) == 0 ? 1 : 0
   count             = length(var.security_group_ids.ecs) == 0 ? 1 : 0

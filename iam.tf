@@ -14,7 +14,9 @@ data "aws_iam_policy_document" "ecs_task_policy" {
     actions = [
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
-      "logs:PutLogEvents"
+      "logs:PutLogEvents",
+      "logs:DescribeLogGroups",
+      "logs:DescribeLogStreams"
     ]
     effect    = "Allow"
     resources = ["*"]
@@ -22,12 +24,22 @@ data "aws_iam_policy_document" "ecs_task_policy" {
   statement {
     actions   = ["secretsmanager:GetSecretValue"]
     effect    = "Allow"
-    resources = [ aws_secretsmanager_secret.wordpress.arn ]
+    resources = [aws_secretsmanager_secret.wordpress.arn]
   }
   statement {
     actions   = ["kms:Decrypt"]
     effect    = "Allow"
-    resources = [ aws_kms_key.wordpress.arn ]
+    resources = [aws_kms_key.wordpress.arn]
+  }
+  statement {
+    actions = [
+      "ssmmessages:CreateControlChannel",
+      "ssmmessages:CreateDataChannel",
+      "ssmmessages:OpenControlChannel",
+      "ssmmessages:OpenDataChannel"
+    ]
+    effect    = "Allow"
+    resources = ["*"]
   }
 }
 

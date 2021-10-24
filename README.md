@@ -1,4 +1,4 @@
-# terraform-aws-wordpress-ecs
+# terraform-aws-fargate-wordpress
 
 Terraform module which deploys Wordpress on AWS using ECS Fargate for compute, RDS for database and an application load balancer.
 
@@ -15,6 +15,24 @@ There are the features and services involved for the stack :
 - KMS for encryption key management
 - IAM, SG, CW and VPC (but how could we live without them)
 - of course Terraform and Wordpress :)
+
+## PREREQUISITES
+An exisiting Route53 public hosted zone should be present
+Your variables.tf should have those 3 variables
+
+```
+variable "domain_name" {
+  default = "mydomain.tld"
+}
+
+variable "wp_subdomain" {
+  default = "wordpress"
+}
+
+variable "route53_zone_id" {
+  default = "CHANGE_HERE"
+}
+```
 
 ## Example Usage
 

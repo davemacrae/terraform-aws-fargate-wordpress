@@ -2,6 +2,20 @@
 
 Terraform module which deploys Wordpress on AWS using ECS Fargate for compute, RDS for database and an application load balancer.
 
+There are the features and services involved for the stack :
+- ECS and Fargate for the containers
+- RDS Aurora Serverless for the database
+- Route53 for DNS
+- Cloudfront as CDN
+- ALB and ASG for availability
+- Spot for 50% of the containers
+- ECS Exec to allow you to connect to your container
+- EFS for data persistence
+- ACM for SSL certificate management
+- KMS for encryption key management
+- IAM, SG, CW and VPC (but how could we live without them)
+- of course Terraform and Wordpress :)
+
 ## Example Usage
 
 ```hcl

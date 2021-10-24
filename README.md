@@ -63,9 +63,11 @@ module "wordpress-ecs" {
   vpc_id                     = module.vpc.vpc_id
 }
 
+
+```
+
+
 TODO :
 - Manage multiple wordpress deployments using same resources (ALB, EFS, ECS cluster etc...)
 - Manage other region
 ...
-
-```

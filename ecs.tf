@@ -1,16 +1,12 @@
 resource "aws_ecs_cluster" "wordpress" {
   name               = var.ecs_cluster_name
   tags               = var.tags
-  capacity_providers = ["FARGATE", "FARGATE_SPOT"]
+  capacity_providers = ["FARGATE_SPOT"]
   default_capacity_provider_strategy {
     capacity_provider = "FARGATE_SPOT"
     weight            = 50
   }
-  default_capacity_provider_strategy {
-    capacity_provider = "FARGATE"
-    weight            = 50
-    base              = "1"
-  }
+  
   configuration {
     execute_command_configuration {
       kms_key_id = aws_kms_key.wordpress.arn
@@ -41,7 +37,7 @@ resource "aws_ecs_task_definition" "wordpress" {
     }
   )
   network_mode             = "awsvpc"
-  requires_compatibilities = ["FARGATE"]
+  requires_compatibilities = ["FARGATE_SPOT"]
   cpu                      = var.ecs_task_definition_cpu
   memory                   = var.ecs_task_definition_memory
   execution_role_arn       = aws_iam_role.ecs_task_role.arn
@@ -82,11 +78,7 @@ resource "aws_ecs_service" "wordpress" {
   enable_execute_command = true
   capacity_provider_strategy {
     capacity_provider = "FARGATE_SPOT"
-    weight            = 50
-  }
-  capacity_provider_strategy {
-    capacity_provider = "FARGATE"
-    weight            = 50
+    weight            = 100
   }
   network_configuration {
     subnets          = var.ecs_service_subnet_ids

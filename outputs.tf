@@ -45,3 +45,7 @@ output "rds_cluster_endpoint" {
 output "secretsmanager_secret_arn" {
   value = aws_secretsmanager_secret.wordpress.arn
 }
+
+output "Load_Balancer_Address" {
+  value = aws_lb.wordpress.dns_name
+}

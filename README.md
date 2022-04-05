@@ -8,7 +8,7 @@ There are the features and services involved for the stack :
 - Route53 for DNS
 - Cloudfront as CDN
 - ALB and ASG for availability
-- Spot for 50% of the containers
+- Spot for allHow i of the containers
 - ECS Exec to allow you to connect to your container
 - EFS for data persistence
 - ACM for SSL certificate management

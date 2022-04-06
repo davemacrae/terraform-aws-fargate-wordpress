@@ -3,7 +3,7 @@
 Terraform module which deploys Wordpress on AWS using ECS Fargate for compute, RDS for database and an application load balancer.
 
 There are the features and services involved for the stack :
-- ECS and Fargate for the containers
+- ECS and Fargate SPOT for the containers
 - RDS Aurora Serverless for the database
 - Route53 for DNS
 - Cloudfront as CDN
@@ -29,9 +29,12 @@ variable "wp_subdomain" {
   default = "wordpress"
 }
 
+<!-- 
+Removed as we are using a domain controlled from another account
 variable "route53_zone_id" {
   default = "CHANGE_HERE"
-}
+} 
+-->
 ```
 
 ## Example Usage
@@ -58,11 +61,11 @@ module "acm" {
   source      = "terraform-aws-modules/acm/aws"
   version     = "~> 3.0"
   domain_name = var.domain_name
-  zone_id     = var.route53_zone_id
+  <!-- zone_id     = var.route53_zone_id -->
   subject_alternative_names = [
     "*.${var.domain_name}",
   ]
-  wait_for_validation = true
+  <!-- wait_for_validation = true -->
   tags = {
     Name = var.domain_name
   }
@@ -77,7 +80,7 @@ module "wordpress-ecs" {
   domain_name                = "${var.wp_subdomain}.${var.domain_name}"
   cnames                     = ["${var.wp_subdomain}.${var.domain_name}"]
   acm_certificate_arn        = module.acm.acm_certificate_arn
-  zone_id                    = var.route53_zone_id
+  <!-- zone_id                    = var.route53_zone_id -->
   vpc_id                     = module.vpc.vpc_id
 }
 

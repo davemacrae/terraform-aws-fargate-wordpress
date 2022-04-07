@@ -24,31 +24,40 @@ There are the features and services involved for the stack :
 variable "domain_name" {
   default = "mydomain.tld"
 }
+variable "region" {
+  default = "eu-west-2"
+}
+variable "profile" {
+  default = "myuser"
+}
 
 variable "wp_subdomain" {
   default = "wordpress"
 }
 
-<!-- 
-Removed as we are using a domain controlled from another account
-variable "route53_zone_id" {
-  default = "CHANGE_HERE"
-} 
--->
+variable "cloudfront_acm_certificate_arn" {
+  description = "SSL Certificate ARN for Cloudfront - Must be in us-east-1"
+  default     = "arn:aws:acm:us-east-1:123456789012:certificate/12abcdef-1234-abcd-abcd-ffff12345678"
+}
+variable "lb_acm_certificate_arn" {
+  description = "SSL Certificate ARN"
+  default     = "arn:aws:acm:eu-west-2:123456789012:certificate/12abcdef-1234-abcd-abcd-ffff12345678"
+}
 ```
 
 ## Example Usage
 
 ```hcl
 provider "aws" {
-  region  = "us-east-1"
+  region  = var.region
+  profile = var.profile
 }
 
 module "vpc" {
   source               = "terraform-aws-modules/vpc/aws"
   name                 = "wordpress"
   cidr                 = "10.0.0.0/16"
-  azs                  = ["us-east-1a", "us-east-1b"]
+  azs                  = ["eu-west-2a", "eu-west-2b"]
   public_subnets       = ["10.0.0.0/24", "10.0.1.0/24"]
   private_subnets      = ["10.0.2.0/24", "10.0.3.0/24"]
   intra_subnets        = ["10.0.4.0/24", "10.0.5.0/24"]
@@ -57,38 +66,23 @@ module "vpc" {
   enable_dns_hostnames = true
 }
 
-module "acm" {
-  source      = "terraform-aws-modules/acm/aws"
-  version     = "~> 3.0"
-  domain_name = var.domain_name
-  <!-- zone_id     = var.route53_zone_id -->
-  subject_alternative_names = [
-    "*.${var.domain_name}",
-  ]
-  <!-- wait_for_validation = true -->
-  tags = {
-    Name = var.domain_name
-  }
+module "terraform-aws-fargate-wordpress" {
+  source                         = "../terraform-aws-fargate-wordpress"
+  ecs_service_subnet_ids         = module.vpc.private_subnets
+  lb_subnet_ids                  = module.vpc.public_subnets
+  db_subnet_group_subnet_ids     = module.vpc.database_subnets
+  domain_name                    = "${var.wp_subdomain}.${var.domain_name}"
+  cnames                         = ["${var.wp_subdomain}.${var.domain_name}"]
+  acm_certificate_arn            = var.lb_acm_certificate_arn
+  lb_acm_certificate_arn         = var.lb_acm_certificate_arn
+  cloudfront_acm_certificate_arn = var.cloudfront_acm_certificate_arn
+  vpc_id                         = module.vpc.vpc_id
 }
-
-module "wordpress-ecs" {
-  source  = "jbgraindorge/wordpress-fargate/aws"
-  version = "1.0.0"
-  ecs_service_subnet_ids     = module.vpc.private_subnets
-  lb_subnet_ids              = module.vpc.public_subnets
-  db_subnet_group_subnet_ids = module.vpc.database_subnets
-  domain_name                = "${var.wp_subdomain}.${var.domain_name}"
-  cnames                     = ["${var.wp_subdomain}.${var.domain_name}"]
-  acm_certificate_arn        = module.acm.acm_certificate_arn
-  <!-- zone_id                    = var.route53_zone_id -->
-  vpc_id                     = module.vpc.vpc_id
-}
-
 
 ```
-
 
 TODO :
 - Manage multiple wordpress deployments using same resources (ALB, EFS, ECS cluster etc...)
 - Manage other region
+- Better handling of region indication
 ...

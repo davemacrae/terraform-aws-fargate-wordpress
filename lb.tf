@@ -19,7 +19,7 @@ resource "aws_lb_listener" "wordpress_http" {
 
 resource "aws_lb_listener" "wordpress_https" {
   count             = var.lb_listener_enable_ssl ? 1 : 0
-  certificate_arn   = var.acm_certificate_arn
+  certificate_arn   = var.lb_acm_certificate_arn
   load_balancer_arn = aws_lb.wordpress.arn
   port              = "443"
   protocol          = "HTTPS"

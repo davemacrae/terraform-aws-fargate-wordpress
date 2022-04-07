@@ -42,7 +42,7 @@ resource "aws_secretsmanager_secret_version" "wordpress" {
 
 resource "aws_vpc_endpoint" "ssm" {
   vpc_id              = var.vpc_id
-  service_name        = "com.amazonaws.us-east-1.ssmmessages"
+  service_name        = "com.amazonaws.eu-west-2.ssmmessages"
   vpc_endpoint_type   = "Interface"
   security_group_ids  = local.ecs_service_security_group_ids
   subnet_ids          = var.ecs_service_subnet_ids

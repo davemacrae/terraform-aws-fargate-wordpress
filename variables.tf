@@ -342,3 +342,5 @@ variable "minimum_protocol_version" {
 variable "vpc_id" {}
 # variable "acm_certificate_arn" {}
 
+variable "lb_acm_certificate_arn" {}
+variable "cloudfront_acm_certificate_arn" {}

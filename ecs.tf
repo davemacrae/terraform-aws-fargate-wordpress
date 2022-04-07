@@ -37,7 +37,7 @@ resource "aws_ecs_task_definition" "wordpress" {
     }
   )
   network_mode             = "awsvpc"
-  requires_compatibilities = ["FARGATE_SPOT"]
+  requires_compatibilities = ["FARGATE"]
   cpu                      = var.ecs_task_definition_cpu
   memory                   = var.ecs_task_definition_memory
   execution_role_arn       = aws_iam_role.ecs_task_role.arn
